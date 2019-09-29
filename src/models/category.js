@@ -12,6 +12,7 @@ var Category = mongoose.model(
     icon : String,
     parent : String,
     currentCategoryPath : String,
+    displayLabel : String,
     createdAt: String,
     updatedAt: String,
     icon : String,
