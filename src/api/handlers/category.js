@@ -2,82 +2,87 @@
 
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveCategory, findAllRootCategories, findCategoryById, editCategory, removeCategory,findAllSubCategories } from "../../models/category";
+import { saveCategory, findAllRootCategories, findCategoryById, editCategory, removeCategory, findAllSubCategories, findDescendentCategoriesOnlyc, findDescendentCategoriesOnly } from "../../models/category";
 
 
 export async function addCategory(req, res) {
-  try {
-    let body = parseBody(req)
-    if (body) {
-      let category = await saveCategory(body)
-      if (category) {
-        generateResponse(category.success, category.message, category.data, res)
-      }
+    try {
+        let body = parseBody(req)
+        if (body) {
+            let category = await saveCategory(body)
+            if (category) {
+                generateResponse(category.success, category.message, category.data, res)
+            }
+        } else {
+            generateResponse(false, "Please provide complete info", null, res)
+        }
+    } catch (err) {
+        generateResponse(false, 'Error occured, 404 not found!', err, res)
     }
-    else {
-      generateResponse(false, "Please provide complete info", null, res)
-    }
-  }
-  catch (err) {
-    generateResponse(false, 'Error occured, 404 not found!', err, res)
-  }
 }
 
 export async function getAllCategories(req, res) {
-  try {
-    let categories = await findAllRootCategories()
-    if (categories) {
-      generateResponse(categories.success, categories.message, categories.data, res)
+    try {
+        let categories = await findAllRootCategories()
+        if (categories) {
+            generateResponse(categories.success, categories.message, categories.data, res)
+        }
+    } catch (err) {
+        generateResponse(false, 'Error occured, 404 not found!', err, res)
     }
-  }
-  catch (err) {
-    generateResponse(false, 'Error occured, 404 not found!', err, res)
-  }
 }
 
-export async function getSubCategories(req,res){
-  let body = parseBody(req)
-  try {
-    let subCategories = await findAllSubCategories(body)
-    if (subCategories) {
-      generateResponse(subCategories.success, subCategories.message, subCategories.data, res)
+export async function getSubCategories(req, res) {
+    let body = parseBody(req)
+    try {
+        let subCategories = await findAllSubCategories(body)
+        if (subCategories) {
+            generateResponse(subCategories.success, subCategories.message, subCategories.data, res)
+        }
+    } catch (err) {
+        generateResponse(false, 'Error occured, 404 not found!', err, res)
     }
-  }
-  catch (err) {
-    generateResponse(false, 'Error occured, 404 not found!', err, res)
-  }
+}
+
+export async function getDecendenctCategories(req, res) {
+    let body = parseBody(req)
+    try {
+        let decendentCategories = await findDescendentCategoriesOnly(body)
+        if (decendentCategories) {
+            generateResponse(decendentCategories.success, decendentCategories.message, decendentCategories.data, res)
+        }
+    } catch (err) {
+        generateResponse(false, 'Error occured, 404 not found!', err, res)
+    }
 }
 
 export async function getCategoryById(req, res) {
-  try {
-    let id = req.params.id
-    let category = await findCategoryById(id)
-    if (category) {
-      generateResponse(category.success, category.message, category.data, res)
+    try {
+        let id = req.params.id
+        let category = await findCategoryById(id)
+        if (category) {
+            generateResponse(category.success, category.message, category.data, res)
+        }
+    } catch (err) {
+        generateResponse(false, 'Error occured, 404 not found!', err, res)
     }
-  }
-  catch (err) {
-    generateResponse(false, 'Error occured, 404 not found!', err, res)
-  }
 }
 
 export async function updateCategory(req, res) {
-  try {
-    let body = parseBody(req)
-    if (body) {
-      body.updatedAt = Date.now()
-      let category = await editCategory(body)
-      if (category) {
-        generateResponse(category.success, category.message, null, res)
-      }
+    try {
+        let body = parseBody(req)
+        if (body) {
+            body.updatedAt = Date.now()
+            let category = await editCategory(body)
+            if (category) {
+                generateResponse(category.success, category.message, null, res)
+            }
+        } else {
+            generateResponse(false, "Please give complete info", null, res)
+        }
+    } catch (err) {
+        generateResponse(false, 'Error occured, 404 not found!', err, res)
     }
-    else {
-      generateResponse(false, "Please give complete info", null, res)
-    }
-  }
-  catch (err) {
-    generateResponse(false, 'Error occured, 404 not found!', err, res)
-  }
 }
 
 // export async function getAllFloorsOfBuilding(req, res) {
@@ -98,19 +103,18 @@ export async function updateCategory(req, res) {
 //   }
 // }
 
-export async function deleteCategory(req,res) {
-  try{
-    let id = req.params.id;
-    if (id) {
-      let category = await removeCategory(id);
-      if (category) {
-        generateResponse(category.success, category.message, category.data, res)
-      }
+export async function deleteCategory(req, res) {
+    try {
+        let id = req.params.id;
+        if (id) {
+            let category = await removeCategory(id);
+            if (category) {
+                generateResponse(category.success, category.message, category.data, res)
+            }
+        }
+    } catch (err) {
+        generateResponse(false, 'Error occured, 404 not found!', err, res)
     }
-  }
-  catch (err) {
-    generateResponse(false, 'Error occured, 404 not found!', err, res)
-  }
 }
 
 
