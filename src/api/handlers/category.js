@@ -106,8 +106,9 @@ export async function updateCategory(req, res) {
 export async function deleteCategory(req, res) {
     try {
         let id = req.params.id;
+        let categoryName = req.params.name;
         if (id) {
-            let category = await removeCategory(id);
+            let category = await removeCategory(id, categoryName);
             if (category) {
                 generateResponse(category.success, category.message, category.data, res)
             }

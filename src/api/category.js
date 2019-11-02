@@ -19,7 +19,7 @@ export default class CategoriesAPI {
         router.get("/:id", log, loggedIn, getCategoryById);
         router.put("/edit", log, updateCategory);
         router.post('/sub', log, getSubCategories)
-        router.delete('/:id', log, deleteCategory)
+        router.delete('/:id/:name', log, deleteCategory)
         router.post('/decendentCategory', log, getDecendenctCategories)
 
     }

@@ -11,7 +11,7 @@ var Product = mongoose.model(
         description: String,
         thumnbail: String,
         images: [String],
-        Unitprice: Number,
+        price: Number,
         quantity: Number,
         discount: Number,
         category: { type: Schema.Types.ObjectId, ref: "category" },
@@ -131,7 +131,7 @@ export function editProduct(body) {
     return new Promise((resolve, reject) => {
         let id = body._id;
         delete body.id
-        if (body.name && body.colors) {
+        if (body.name) {
             Product.find({ name: body.name, isActive: true }).exec((err, docs) => {
                 console.log(docs, 'in name')
                 if (docs) {

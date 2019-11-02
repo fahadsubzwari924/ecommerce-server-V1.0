@@ -143,50 +143,43 @@ export function editCategory(body) {
         let newCategoryName = body.name;
         delete body._id;
         Category.findById({ _id: id }).exec((err, docs) => {
+            console.log(docs, 'docs')
             if (docs) {
-                console.log(docs, 'docs')
                 let oldCategoryName = docs.name;
                 Category.updateOne({ _id: id }, { $set: body }, (err, categoryUpdate) => {
                     if (!err) {
-                        console.log(oldCategoryName, ' old category name')
                         Category.find({ parent: new RegExp(oldCategoryName, 'g') }).exec((err, editDocs) => {
-                                console.log('containing docs', editDocs)
-                                if (editDocs.length > 0) {
-                                    editDocs.forEach((item, index) => {
-                                        let newCurrentPath = item['currentCategoryPath'].replace(oldCategoryName, newCategoryName);
-                                        let newParentPath = item['parent'].replace(oldCategoryName, newCategoryName);
-                                        let newDisplayLabel = item['displayLabel'].replace(oldCategoryName, newCategoryName);
-                                        item['currentCategoryPath'] = newCurrentPath
-                                        item['parent'] = newParentPath
-                                        item['displayLabel'] = newDisplayLabel
-                                        item.save((err, result) => {
-                                            if (result) {
-                                                resolve({
-                                                    success: true,
-                                                    message: "Category and sub categories updated successfully",
-                                                    data: result
-                                                });
-                                            } else {
-                                                resolve({
-                                                    success: false,
-                                                    message: "Error in editing categories and sub categories",
-                                                    data: err
-                                                });
-                                            }
-                                        })
+                            if (editDocs.length > 0) {
+                                editDocs.forEach((item, index) => {
+                                    let newCurrentPath = item['currentCategoryPath'].replace(oldCategoryName, newCategoryName);
+                                    let newParentPath = item['parent'].replace(oldCategoryName, newCategoryName);
+                                    let newDisplayLabel = item['displayLabel'].replace(oldCategoryName, newCategoryName);
+                                    item['currentCategoryPath'] = newCurrentPath
+                                    item['parent'] = newParentPath
+                                    item['displayLabel'] = newDisplayLabel
+                                    item.save((err, result) => {
+                                        if (result) {
+                                            resolve({
+                                                success: true,
+                                                message: "Category and sub categories updated successfully",
+                                                data: result
+                                            });
+                                        } else {
+                                            resolve({
+                                                success: false,
+                                                message: "Error in editing categories and sub categories",
+                                                data: err
+                                            });
+                                        }
                                     })
-                                } else {
-                                    resolve({
-                                        success: false,
-                                        message: "No documents found",
-                                    });
-                                }
-                            })
-                            // resolve({
-                            //     success: true,
-                            //     message: "Category updated successfully",
-                            //     data: categoryUpdate
-                            // });
+                                })
+                            } else {
+                                resolve({
+                                    success: true,
+                                    message: "Categrory updated sucessfully",
+                                });
+                            }
+                        })
                     } else {
                         resolve({
                             success: false,
@@ -205,17 +198,43 @@ export function editCategory(body) {
         })
     })
 }
-export function removeCategory(id) {
+export function removeCategory(id, name) {
+    let removeCategoryIds = []
     return new Promise((resolve, reject) => {
         Category.findByIdAndRemove({ _id: id }, (err, link) => {
             if (!err) {
-                resolve({
-                    success: true,
-                    message: "Category removed successfully",
-                    data: null
-                });
+                Category.find({ parent: new RegExp(name, 'g') }).exec((error, docs) => {
+                    if (docs.length > 0) {
+                        docs.forEach(item => {
+                            removeCategoryIds.push(item._id)
+                        })
+                        console.log(removeCategoryIds, 'removeIds')
+                        if (removeCategoryIds.length > 0) {
+                            Category.deleteMany({ _id: removeCategoryIds }).exec((err, deleteManyResult) => {
+                                if (deleteManyResult) {
+                                    resolve({
+                                        success: true,
+                                        message: "Category and related sub categories removed successfully",
+                                        data: null
+                                    })
+                                } else {
+                                    resolve({
+                                        success: false,
+                                        message: "Deleted category but error in deleting sub categories",
+                                        data: err
+                                    })
+                                }
+                            })
+                        }
+                    } else {
+                        resolve({
+                            success: false,
+                            message: "Deleted category, and no sub categories found to delete",
+                            data: error
+                        })
+                    }
+                })
             } else {
-
                 resolve({
                     success: false,
                     message: "Unable to remove category",
