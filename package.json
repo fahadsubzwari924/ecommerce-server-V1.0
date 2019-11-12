@@ -29,7 +29,7 @@
         "mongoose": "^5.4.0",
         "mqtt": "^2.18.8",
         "mqtt-client": "^0.1.0",
-        "multer": "^1.4.1",
+        "multer": "^1.4.2",
         "mysql2": "^1.5.1",
         "nodemailer": "^4.7.0",
         "raven": "^2.6.4",
