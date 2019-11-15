@@ -16,7 +16,7 @@ let app = express();
 let whitelist = Object.keys(config.whitelist).map(k => config.whitelist[k]);
 
 var isMQTTConnected = false;
-onConnection(function () {
+onConnection(function() {
     console.log('MQTT Client Connected..');
     isMQTTConnected = true;
 })
@@ -24,6 +24,7 @@ exports.isMQTTConnected = isMQTTConnected;
 
 app.set("port", port);
 app.use(bodyParser.json({ limit: config.app['bodyLimit'] }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(config.app['cookie_secret']));
 
 app.use(cors({
@@ -41,25 +42,23 @@ new Api(app).registerGroup();
 app.use('/static', express.static(join(__dirname, 'static')));
 app.use('/', log, DefaultHandler);
 
-mongoose.connect('mongodb://' + config.database.host + ':' + config.database.port + '/' + config.database.name, { useNewUrlParser: true }).then(resp=>{
-    if(resp){
+mongoose.connect('mongodb://' + config.database.host + ':' + config.database.port + '/' + config.database.name, { useNewUrlParser: true }).then(resp => {
+    if (resp) {
         console.log('Database connected')
-    }
-    else{
+    } else {
         console.log('Unable to connect to Database')
     }
-}).catch(ex=>{
+}).catch(ex => {
     console.log('Unable to connect to Database')
     console.log(ex)
 })
-    
+
 
 
 http
     .createServer(app)
-    .on('error', function (ex) {
+    .on('error', function(ex) {
         console.log(ex);
         console.log('Can\'t connect to server.');
     })
     .listen(port, () => console.log(`Server Started :: ${port}`));
-

@@ -20,6 +20,7 @@
         "cryptr": "^4.0.2",
         "express": "^4.16.2",
         "express-subdomain": "^1.0.5",
+        "fs-extra": "^8.1.0",
         "htmltopdf": "0.0.8",
         "ini": "^1.3.5",
         "jsonwebtoken": "^8.1.0",

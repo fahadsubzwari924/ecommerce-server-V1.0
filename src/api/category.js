@@ -2,7 +2,7 @@
 
 import { Router } from "express";
 import { log, loggedIn } from "./middlewares/index";
-import { getAllCategories, getCategoryById, addCategory, updateCategory, getSubCategories, deleteCategory, getDecendenctCategories } from "./handlers/category";
+import { getAllCategories, getCategoryById, addCategory, updateCategory, getSubCategories, deleteCategory, getDecendenctCategories, getAllTotalCategories } from "./handlers/category";
 
 
 export default class CategoriesAPI {
@@ -16,6 +16,7 @@ export default class CategoriesAPI {
 
         router.post("/", log, addCategory);
         router.get("/", log, getAllCategories);
+        router.get('/all', log, getAllTotalCategories)
         router.get("/:id", log, loggedIn, getCategoryById);
         router.put("/edit", log, updateCategory);
         router.post('/sub', log, getSubCategories)

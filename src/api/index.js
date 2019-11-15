@@ -1,6 +1,6 @@
 'use strict';
 
-import {Router} from "express";
+import { Router } from "express";
 import RootAPI from "./root";
 import BleAPI from "./ble";
 import GatewayAPI from "./gateway";
@@ -16,7 +16,7 @@ import MenuAPI from "./menu";
 import ConfigurationAPI from "./configuration";
 import CategoriesAPI from './category';
 import ProductAPI from './product';
-
+import BrandAPI from './brand';
 
 
 export default class Api {
@@ -42,6 +42,7 @@ export default class Api {
         this.routeGroups.push(new ConfigurationAPI());
         this.routeGroups.push(new CategoriesAPI());
         this.routeGroups.push(new ProductAPI());
+        this.routeGroups.push(new BrandAPI());
 
 
 

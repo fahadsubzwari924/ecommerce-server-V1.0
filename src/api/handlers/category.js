@@ -2,7 +2,7 @@
 
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveCategory, findAllRootCategories, findCategoryById, editCategory, removeCategory, findAllSubCategories, findDescendentCategoriesOnlyc, findDescendentCategoriesOnly } from "../../models/category";
+import { saveCategory, findAllRootCategories, findCategoryById, editCategory, removeCategory, findAllSubCategories, findDescendentCategoriesOnlyc, findDescendentCategoriesOnly, findAllTotalCategories } from "../../models/category";
 
 
 export async function addCategory(req, res) {
@@ -15,6 +15,17 @@ export async function addCategory(req, res) {
             }
         } else {
             generateResponse(false, "Please provide complete info", null, res)
+        }
+    } catch (err) {
+        generateResponse(false, 'Error occured, 404 not found!', err, res)
+    }
+}
+
+export async function getAllTotalCategories(req, res) {
+    try {
+        let categories = await findAllTotalCategories()
+        if (categories) {
+            generateResponse(categories.success, categories.message, categories.data, res)
         }
     } catch (err) {
         generateResponse(false, 'Error occured, 404 not found!', err, res)

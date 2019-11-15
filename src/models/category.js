@@ -57,6 +57,26 @@ export function saveCategory(obj) {
 
 }
 
+export function findAllTotalCategories() {
+    return new Promise((resolve, reject) => {
+        Category.find({}).exec((err, docs) => {
+            if (!err) {
+                resolve({
+                    success: true,
+                    message: "Categories fetched successfully",
+                    data: docs
+                });
+            } else {
+                resolve({
+                    success: false,
+                    message: "Can't find Categories",
+                    data: null
+                });
+            }
+        });
+    });
+}
+
 export function findAllRootCategories() {
     return new Promise((resolve, reject) => {
         Category.find({ parent: '/', isActive: true }).exec((err, docs) => {

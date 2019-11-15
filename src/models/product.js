@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var Product = mongoose.model(
+export var Product = mongoose.model(
     "product",
     new Schema({
         name: String,
@@ -11,6 +11,7 @@ var Product = mongoose.model(
         description: String,
         thumnbail: String,
         images: [String],
+        thumnbnailImage: String,
         price: Number,
         quantity: Number,
         discount: Number,
@@ -22,16 +23,17 @@ var Product = mongoose.model(
 );
 
 export function saveProduct(obj) {
+    delete obj._id;
     return new Promise((resolve, reject) => {
         Product.find({ name: obj.name, isActive: true }).exec((err, docs) => {
-            console.log(docs, 'docs')
+            // console.log(docs, 'docs')
             if (docs) {
                 if (docs.length == 0) {
                     Product.find({ colors: obj.color }).exec((err, docs) => {
                         if (docs) {
                             if (docs.length == 0) {
                                 Product.find({ sizes: obj.size }).exec((err, sizeDocs) => {
-                                    console.log(sizeDocs, 'size')
+                                    // console.log(sizeDocs, 'size')
                                     if (sizeDocs.length == 0) {
                                         obj.createdAt = Date.now()
                                         obj.updatedAt = Date.now()
