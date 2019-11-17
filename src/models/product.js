@@ -5,7 +5,7 @@ export var Product = mongoose.model(
     "product",
     new Schema({
         name: String,
-        brand: String,
+        brand: { type: Schema.Types.ObjectId, ref: "brand" },
         colors: [String],
         sizes: [String],
         description: String,
@@ -87,7 +87,7 @@ export function saveProduct(obj) {
 
 export function findAllProducts() {
     return new Promise((resolve, reject) => {
-        Product.find({ isActive: true }).populate('category').exec((err, docs) => {
+        Product.find({ isActive: true }).populate('category').populate('brand').exec((err, docs) => {
             if (!err) {
 
                 resolve({

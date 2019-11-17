@@ -27,6 +27,8 @@ app.use(bodyParser.json({ limit: config.app['bodyLimit'] }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(config.app['cookie_secret']));
 
+
+
 app.use(cors({
     origin: (origin, callback) => {
         console.log(origin);
@@ -40,6 +42,8 @@ app.use(cors({
 new Api(app).registerGroup();
 
 app.use('/static', express.static(join(__dirname, 'static')));
+app.use('/uploads', express.static('uploads'))
+
 app.use('/', log, DefaultHandler);
 
 mongoose.connect('mongodb://' + config.database.host + ':' + config.database.port + '/' + config.database.name, { useNewUrlParser: true }).then(resp => {
