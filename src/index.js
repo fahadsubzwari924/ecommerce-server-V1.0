@@ -42,7 +42,7 @@ app.use(cors({
 new Api(app).registerGroup();
 
 app.use('/static', express.static(join(__dirname, 'static')));
-app.use('/uploads', express.static('uploads'))
+app.use('/uploads', express.static('uploads'));
 
 app.use('/', log, DefaultHandler);
 
