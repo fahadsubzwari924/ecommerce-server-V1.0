@@ -2,7 +2,7 @@
 
 import { Router } from "express";
 import { log, loggedIn } from "./middlewares/index";
-import { addProduct, getAllProducts, getProductById, updateProduct, deleteProduct } from "./handlers/product";
+import { addProduct, getAllProducts, getProductById, updateProduct, deleteProduct, getAllLatestProducts } from "./handlers/product";
 const multer = require('multer');
 const uploadFolder = 'uploads/';
 const fs = require('fs');
@@ -66,6 +66,7 @@ export default class ProductAPI {
 
         router.post("/", log, upload.fields([{ name: 'image' }, { name: 'cover_image' }, { name: 'thumbnail_image' }]), addProduct);
         router.get("/", log, getAllProducts);
+        router.get('/latest', log, getAllLatestProducts)
         router.get("/:id", log, getProductById);
         router.put("/", log, updateProduct);
         router.delete('/:id', log, deleteProduct)

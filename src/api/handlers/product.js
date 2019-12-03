@@ -2,7 +2,7 @@
 
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, removeProduct } from "../../models/product";
+import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, removeProduct, findAllLatestProducts } from "../../models/product";
 import { Product } from './../../models/product';
 import { Gateway } from './../../models/gateway'
 const multer = require('multer');
@@ -84,7 +84,16 @@ export async function getAllProducts(req, res) {
         generateResponse(false, 'Error occured, 404 not found!', err, res)
     }
 }
-
+export async function getAllLatestProducts(req, res) {
+    try {
+        let products = await findAllLatestProducts()
+        if (products) {
+            generateResponse(products.success, products.message, products.data, res)
+        }
+    } catch (err) {
+        generateResponse(false, 'Error occured, 404 not found!', err, res)
+    }
+}
 export async function getProductById(req, res) {
     try {
         let id = req.params.id

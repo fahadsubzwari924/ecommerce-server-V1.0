@@ -18,6 +18,7 @@ export var Product = mongoose.model(
         category: { type: Schema.Types.ObjectId, ref: "category" },
         createdAt: String,
         updatedAt: String,
+        isFeatured: { type: Boolean, default: false },
         isActive: { type: Boolean, default: true }
     })
 );
@@ -100,6 +101,27 @@ export function findAllProducts() {
                 resolve({
                     success: false,
                     message: "Can't find Products",
+                    data: null
+                });
+            }
+        });
+    });
+}
+export function findAllLatestProducts() {
+    return new Promise((resolve, reject) => {
+        Product.find({ isActive: true }).populate('category').populate('brand').sort({ 'createdAt': -1 }).limit(5).exec((err, docs) => {
+            if (!err) {
+
+                resolve({
+                    success: true,
+                    message: "Latest products fetched successfully",
+                    data: docs
+                });
+            } else {
+
+                resolve({
+                    success: false,
+                    message: "Can't find latest products",
                     data: null
                 });
             }
