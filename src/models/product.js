@@ -107,26 +107,70 @@ export function findAllProducts() {
         });
     });
 }
-export function findAllLatestProducts() {
-    return new Promise((resolve, reject) => {
-        Product.find({ isActive: true }).populate('category').populate('brand').sort({ 'createdAt': -1 }).limit(5).exec((err, docs) => {
-            if (!err) {
+export function findAllLatestProducts(type) {
 
-                resolve({
-                    success: true,
-                    message: "Latest products fetched successfully",
-                    data: docs
-                });
-            } else {
-
-                resolve({
-                    success: false,
-                    message: "Can't find latest products",
-                    data: null
-                });
-            }
+    if (type == 1) {
+        return new Promise((resolve, reject) => {
+            Product.find({ isActive: true, isFeatured: false }).populate('category').populate('brand').sort({ 'createdAt': -1 }).limit(5).exec((err, docs) => {
+                if (!err) {
+                    resolve({
+                        success: true,
+                        message: "Latest products fetched successfully",
+                        data: docs
+                    });
+                } else {
+                    resolve({
+                        success: false,
+                        message: "Can't find latest products",
+                        data: null
+                    });
+                }
+            });
         });
-    });
+    } else if (type == 2) {
+        return new Promise((resolve, reject) => {
+            Product.find({ isActive: true, isFeatured: true }).populate('category').populate('brand').limit(5).exec((err, docs) => {
+                if (!err) {
+                    resolve({
+                        success: true,
+                        message: "Featured products fetched successfully",
+                        data: docs
+                    });
+                } else {
+                    resolve({
+                        success: false,
+                        message: "Can't find featured products",
+                        data: null
+                    });
+                }
+            });
+        });
+    }
+
+}
+
+export function getPorductsByBrandId(brandId)  {
+
+    return new Promise((resolver, reject) => {
+
+        Product.find({ brand: brandId, isActive: true }).exec((err, docs) => {
+            if (!err) {
+                resolver({
+                    success: true,
+                    data: docs,
+                    message: 'Brand products fetched successfully'
+                })
+            } else {
+                resolver({
+                    success: false,
+                    data: [],
+                    message: 'Can`t find products'
+                })
+            }
+        })
+
+    })
+
 }
 
 export function findProductById(id) {

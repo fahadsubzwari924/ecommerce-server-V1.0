@@ -17,6 +17,8 @@ import ConfigurationAPI from "./configuration";
 import CategoriesAPI from './category';
 import ProductAPI from './product';
 import BrandAPI from './brand';
+import BannerAPI from './banner';
+
 
 
 export default class Api {
@@ -43,6 +45,7 @@ export default class Api {
         this.routeGroups.push(new CategoriesAPI());
         this.routeGroups.push(new ProductAPI());
         this.routeGroups.push(new BrandAPI());
+        this.routeGroups.push(new BannerAPI());
 
 
 

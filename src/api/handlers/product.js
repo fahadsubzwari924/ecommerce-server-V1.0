@@ -2,7 +2,7 @@
 
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, removeProduct, findAllLatestProducts } from "../../models/product";
+import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, getPorductsByBrandId,removeProduct, findAllLatestProducts } from "../../models/product";
 import { Product } from './../../models/product';
 import { Gateway } from './../../models/gateway'
 const multer = require('multer');
@@ -34,14 +34,12 @@ const fs = require('fs-extra');
 //     storage: storage
 // }).array('image');
 
-
-
-
-
 export async function addProduct(req, res) {
     let productImages = [];
+    console.log('Product Object : ', req.fields)
     try {
         let body = parseBody(req)
+        console.log(body,'body')
         if (body) {
             if (req.files['image']) {
                 req.files['image'].forEach(item => {
@@ -86,7 +84,8 @@ export async function getAllProducts(req, res) {
 }
 export async function getAllLatestProducts(req, res) {
     try {
-        let products = await findAllLatestProducts()
+        let type = req.params.type
+        let products = await findAllLatestProducts(type)
         if (products) {
             generateResponse(products.success, products.message, products.data, res)
         }
@@ -103,6 +102,18 @@ export async function getProductById(req, res) {
         }
     } catch (err) {
         generateResponse(false, 'Error occured, 404 not found!', err, res)
+    }
+}
+
+export async function getProductOfBrand(req, res) {
+    try {
+        let brandId = req.params.brnd_id
+        let products = await getPorductsByBrandId(brandId)
+        if (products) {
+            generateResponse(products.success, products.message, products.data, res)
+        }
+    } catch (error) {
+        
     }
 }
 
