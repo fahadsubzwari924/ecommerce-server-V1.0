@@ -8,157 +8,121 @@ var Schema = mongoose.Schema;
 const cryptr = new Cryptr('uemployeelocaitonmonitoringsystemu');
 
 var User = mongoose.model(
-  "users",
-  new Schema({
-    name: String,
-    email: String,
-    password: String,
-    mobileNumber : String,
-    dateOfBirth : Date,
-    isAdmin : Boolean,
-    token: String,
-    roleId: { type: Schema.Types.ObjectId, ref: "roles" },
-    createdAt: String,
-    updatedAt: String,
-    tempToken : String,
-    isActive: { type: Boolean, default: true }
-  })
+    "users",
+    new Schema({
+        name: String,
+        email: String,
+        password: String,
+        mobileNumber: String,
+        country: String,
+        city: String,
+        address: String,
+        isAdmin: { type: Boolean, default: false },
+        roleId: { type: Number, default: 0 },
+        createdAt: String
+    })
 );
 
 
 export async function saveUser(obj) {
-  let chk = await User.find({ 'email': obj.email })
-  if (chk.length == 0) {
-    let hashVal = cryptr.encrypt(obj.password)
-    if (hashVal) {
-      obj.password = hashVal
-      let userObj = new User(obj)
-      let user = await userObj.save()
-      return ({ success: true, message: "User added", data: user })
+    let chk = await User.find({ 'email': obj.email })
+    if (chk.length == 0) {
+        obj.createdAt = new Date().toLocaleString()
+        let userObj = new User(obj)
+        let user = await userObj.save()
+        return ({ success: true, message: "Congragulations! You have successfully registered", data: user })
+
+    } else {
+        return ({ success: false, message: "User already Exist", data: null })
     }
-    else {
-      return ({ success: false, message: "Error in hashing password" })
-    }
-  }
-  else {
-    return ({ success: false, message: "Already Exist", data: null })
-  }
 }
 
 export async function findAllUser() {
 
-  let users = await User.find({}).populate('roleId').exec()
-  return users
+    let users = await User.find({}).exec()
+    return users
 }
 
 export async function findUserById(id) {
-  let users = await User.findById(id).populate('roleId').exec()
-  let pass = cryptr.decrypt(user.password)
-  users.password = pass
-  return users 
+    let user = await User.findById(id).exec()
+    return user
 }
 
-export async function editUser(body) {
-  let id = body.id
-  if(body.password){
-    let hashVal = cryptr.encrypt(body.password)
-    body.password = hashVal
-    let users = await User.updateOne(
-    { _id: id },
-    { $set: body })
-    return users
-  }
-  else{
-    let users = await User.updateOne(
-      { _id: id },
-      { $set: body })
-      return users
-  }
-  
+export function editUser(body) {
+    return new Promise((resolve, reject) => {
+        let id = body._id
+        delete body._id
+        User.find({ _id: id }).exec((err, docs) => {
+            if (docs) {
+                if (docs.length == 0) {
+                    resolve({
+                        success: false,
+                        message: "User doesn't exist",
+                        data: err
+                    });
+                } else {
+                    User.findByIdAndUpdate(id, body, { new: true }, (err, user) => {
+                        console.log('err : ', err)
+                        console.log('response : ', user)
+                        if (!err) {
+
+                            resolve({
+                                success: true,
+                                message: "User updated successfully",
+                                data: user
+                            });
+                        } else {
+                            resolve({
+                                success: false,
+                                message: "Unable to update user",
+                                data: err
+                            });
+                        }
+                    });
+                }
+            }
+        })
+    });
 }
 
 export async function loginUsers(obj) {
-  var expiry
-  let details = await User.findOne({ "email": obj.email }).populate('roleId')
-  if (details) {
-    if (obj.rememberme == false) {
-      expiry = '24h'
+    var expiry
+    console.log('in login', obj);
+    let details = await User.findOne({ "email": obj.email }).exec()
+    if (details) {
+        console.log('details --- ', details);
+        if (details.password === obj.password) {
+            return ({ success: true, message: "login success", data: details })
+        } else {
+            return ({ success: false, message: "Password incorrect", data: details })
+        }
+    } else {
+        return ({ success: false, message: "No User Found", data: null })
     }
-    else if (obj.rememberme == true) {
-      expiry = '1y'
-    }
-    let plainConvertedPassword = cryptr.decrypt(details.password)
-    let validation = plainConvertedPassword == obj.password ? true : false
-    if (validation) {
-      let tokenObj = {
-        id: details._id,
-        name: details.name,
-        email: details.email,
-        role: details.roleId.slug
-      }
-      let token = await sign(
-        {
-          user: tokenObj
-        },
-        `${config.app["jwtsecret"]}`,
-        {
-          expiresIn: expiry
-        })
-
-      details.token = token
-
-      let updateUser = await User.updateOne({ _id: details._id }, { $set: { token: token } })
-      if (updateUser) {
-        return ({ success: true, message: "User LoggedIn Successfully", data: details })
-      }
-      else {
-        return ({ success: true, message: "Can't Log In", data: null })
-      }
-    }
-    else {
-      return ({ success: false, message: "Password Incorrect", data: null })
-    }
-  }
-  else {
-    return ({ success: false, message: "No User Found", data: null })
-  }
 }
 
-export async function forgetPassword(body){
-  let details = await User.findOne({email : body.email}).exec()
-  if(details){
-    let tokenObj = {
-      _id : details._id,
-      name : details.name,
-      email : details.email
+export async function forgetPassword(body) {
+    let details = await User.findOne({ email: body.email }).exec()
+    if (details) {
+
+        let updateObj = await User.updateOne({ _id: details._id }, { $set: { tempToken: token } })
+        if (updateObj) {
+            return token
+        }
+    } else {
+        return ({ success: false, message: "No User Found", data: null })
     }
-    let token = await sign(
-      {
-        user: tokenObj
-      },
-      `${config.app["jwtsecret"]}`,
-      {
-        expiresIn: 180
-      })
-    let updateObj = await User.updateOne({_id: details._id},{ $set: { tempToken: token } })
-    if(updateObj){
-      return token
-    }
-  }
-  else{
-    return ({ success: false, message: "No User Found", data: null }) 
-  }
 }
 
-export async function changePassword(body){
-  let user = await User.findOne({email : body.token}).exec()
-  if(user){
-    let hashVal = cryptr.encrypt(body.password)
-    let password = await User.updateOne({email : body.token},{$set : {password : hashVal}})
-    if(password){
-      return ({success : true,message:'Password Updated',data:null})
+export async function changePassword(body) {
+    let user = await User.findOne({ email: body.token }).exec()
+    if (user) {
+        let hashVal = cryptr.encrypt(body.password)
+        let password = await User.updateOne({ email: body.token }, { $set: { password: hashVal } })
+        if (password) {
+            return ({ success: true, message: 'Password Updated', data: null })
+        }
+    } else {
+        return ({ success: true, message: 'Can not change password', data: null })
     }
-  }else{
-    return ({success : true,message:'Can not change password',data:null})
-  }
 }

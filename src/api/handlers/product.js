@@ -2,9 +2,8 @@
 
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, getPorductsByBrandId,removeProduct, findAllLatestProducts } from "../../models/product";
+import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, getPorductsByBrandId, removeProduct, findAllLatestProducts } from "../../models/product";
 import { Product } from './../../models/product';
-import { Gateway } from './../../models/gateway'
 const multer = require('multer');
 const uploadFolder = 'uploads/';
 const fs = require('fs-extra');
@@ -39,7 +38,7 @@ export async function addProduct(req, res) {
     console.log('Product Object : ', req.fields)
     try {
         let body = parseBody(req)
-        console.log(body,'body')
+        console.log(body, 'body')
         if (body) {
             if (req.files['image']) {
                 req.files['image'].forEach(item => {
@@ -113,7 +112,7 @@ export async function getProductOfBrand(req, res) {
             generateResponse(products.success, products.message, products.data, res)
         }
     } catch (error) {
-        
+
     }
 }
 

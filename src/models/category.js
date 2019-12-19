@@ -1,6 +1,3 @@
-import { deleteGatewayFromFloor } from "./gateway";
-import { deleteAllFloorApartments } from "./appartment";
-
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
