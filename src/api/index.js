@@ -9,7 +9,7 @@ import CategoriesAPI from './category';
 import ProductAPI from './product';
 import BrandAPI from './brand';
 import BannerAPI from './banner';
-
+import OrdersAPI from './order';
 
 
 export default class Api {
@@ -29,10 +29,7 @@ export default class Api {
         this.routeGroups.push(new ProductAPI());
         this.routeGroups.push(new BrandAPI());
         this.routeGroups.push(new BannerAPI());
-
-
-
-
+        this.routeGroups.push(new OrdersAPI());
     }
 
     setContentType(req, resp, next) {

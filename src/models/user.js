@@ -17,6 +17,8 @@ var User = mongoose.model(
         country: String,
         city: String,
         address: String,
+        postalCode: Number,
+        nearBy: String,
         isAdmin: { type: Boolean, default: false },
         roleId: { type: Number, default: 0 },
         createdAt: String
@@ -97,7 +99,7 @@ export async function loginUsers(obj) {
             return ({ success: false, message: "Password incorrect", data: details })
         }
     } else {
-        return ({ success: false, message: "No User Found", data: null })
+        return ({ success: false, message: "Invalid credentials", data: null })
     }
 }
 

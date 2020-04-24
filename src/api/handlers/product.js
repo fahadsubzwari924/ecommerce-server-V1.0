@@ -2,7 +2,7 @@
 
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, getPorductsByBrandId, removeProduct, findAllLatestProducts } from "../../models/product";
+import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, getPorductsByBrandId, removeProduct, findAllLatestProducts, getPorductsByCategoryId } from "../../models/product";
 import { Product } from './../../models/product';
 const multer = require('multer');
 const uploadFolder = 'uploads/';
@@ -35,10 +35,10 @@ const fs = require('fs-extra');
 
 export async function addProduct(req, res) {
     let productImages = [];
-    console.log('Product Object : ', req.fields)
+    // console.log('Product Object : ', req.fields)
     try {
         let body = parseBody(req)
-        console.log(body, 'body')
+            // console.log(body, 'body')
         if (body) {
             if (req.files['image']) {
                 req.files['image'].forEach(item => {
@@ -115,6 +115,19 @@ export async function getProductOfBrand(req, res) {
 
     }
 }
+
+export async function getProductOfCategory(req, res) {
+    try {
+        let category_id = req.params.cat_id
+        let products = await getPorductsByCategoryId(category_id)
+        if (products) {
+            generateResponse(products.success, products.message, products.data, res)
+        }
+    } catch (error) {
+
+    }
+}
+
 
 export async function updateProduct(req, res) {
     try {

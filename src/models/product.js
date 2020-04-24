@@ -14,6 +14,7 @@ export var Product = mongoose.model(
         thumnbnailImage: String,
         price: Number,
         quantity: Number,
+        isDiscount: { type: Boolean, default: false },
         discount: Number,
         category: { type: Schema.Types.ObjectId, ref: "category" },
         createdAt: String,
@@ -25,9 +26,10 @@ export var Product = mongoose.model(
 
 export function saveProduct(obj) {
     delete obj._id;
+    console.log('incoming object : ', obj);
     return new Promise((resolve, reject) => {
         Product.find({ name: obj.name, isActive: true }).exec((err, docs) => {
-            // console.log(docs, 'docs')
+            console.log(docs, 'docs')
             if (docs) {
                 if (docs.length == 0) {
                     Product.find({ colors: obj.color }).exec((err, docs) => {
@@ -149,7 +151,7 @@ export function findAllLatestProducts(type) {
 
 }
 
-export function getPorductsByBrandId(brandId)  {
+export function getPorductsByBrandId(brandId) {
 
     return new Promise((resolver, reject) => {
 
@@ -172,7 +174,29 @@ export function getPorductsByBrandId(brandId)  {
     })
 
 }
+export function getPorductsByCategoryId(categoryId) {
 
+    return new Promise((resolver, reject) => {
+
+        Product.find({ category: categoryId, isActive: true }).exec((err, docs) => {
+            if (!err) {
+                resolver({
+                    success: true,
+                    data: docs,
+                    message: 'category products fetched successfully'
+                })
+            } else {
+                resolver({
+                    success: false,
+                    data: [],
+                    message: 'Can`t find products'
+                })
+            }
+        })
+
+    })
+
+}
 export function findProductById(id) {
     return new Promise((resolve, reject) => {
         Product.findById(id).populate("category").exec((err, docs) => {

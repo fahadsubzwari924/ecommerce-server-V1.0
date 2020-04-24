@@ -5,7 +5,7 @@ var Brand = mongoose.model(
     "brand",
     new Schema({
         name: String,
-        category: { type: Schema.Types.ObjectId, ref: "category" },
+        // category: { type: Schema.Types.ObjectId, ref: "category" },
         createdAt: String,
     })
 );

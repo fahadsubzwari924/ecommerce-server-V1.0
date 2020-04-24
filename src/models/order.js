@@ -5,32 +5,39 @@ var Schema = mongoose.Schema;
 export var Order = mongoose.model(
     'order',
     new Schema({
-        date: String,
+
         amount: String,
-        quantity: Number,
         status: String,
-        products: [{ type: Schema.Types.ObjectId, ref: "product" }],
-        user: { type: Schema.Types.ObjectId, ref: "users" },
-        createdAt: String,
+        date: String,
+        products: Array,
+        userId: { type: Schema.Types.ObjectId, ref: "users", null: true },
+        user: Object,
+        paymentMethod: String
     })
 );
 
 
-export function saveBanner(obj) {
-    return new Promise((resolver, reject) => {
-        var banner = new Banner(obj)
-        banner.save(function(err, data) {
+export function saveOrder(obj) {
+    console.log('object : ', obj)
+    let productIds = [];
+    // obj.products.forEach(prod => productIds.push(prod.id));
+    // console.log(productIds)
+    return new Promise((resolve, reject) => {
+        var order = new Order(obj)
+        order.save(function(err, data) {
             if (!err) {
-                resolver({
+
+                resolve({
                     success: true,
-                    message: "Banner added Successfully",
+                    message: "Order added Successfully",
                     data
                 });
             } else {
-                resolver({
+                console.log(err, data)
+                resolve({
                     success: false,
-                    message: "Unable to add Banner",
-                    data
+                    message: "Unable to place order",
+                    err
                 });
             }
         })

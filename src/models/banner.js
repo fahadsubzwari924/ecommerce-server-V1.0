@@ -8,14 +8,14 @@ export var Banner = mongoose.model(
         heading: String,
         subHeading: String,
         bannerImage: String,
-        product:{ type: Schema.Types.ObjectId, ref: "product" },
+        product: { type: Schema.Types.ObjectId, ref: "product" },
         category: { type: Schema.Types.ObjectId, ref: "category" },
-        brand: { type: Schema.Types.ObjectId, ref: "brand" },
+        // brand: { type: Schema.Types.ObjectId, ref: "brand" },
         createdAt: String,
         updatedAt: String,
         isActive: { type: Boolean, default: true }
     })
-); 
+);
 
 
 export function saveBanner(obj) {
@@ -45,7 +45,7 @@ export function editBanner(body) {
         var id = body._id
         delete body._id;
         if (body.heading) {
-            Banner.updateOne({_id: id}, {$set: body}).exec((err, banner) => {
+            Banner.updateOne({ _id: id }, { $set: body }).exec((err, banner) => {
                 if (!err) {
                     resolver({
                         success: true,
@@ -69,7 +69,7 @@ export function editBanner(body) {
 export function removeBanner(id) {
     return new Promise((resolver, reject) => {
         let status = { isActive: true }
-        Banner.findByIdAndRemove({ _id: id}, 
+        Banner.findByIdAndRemove({ _id: id },
             (err, bann) => {
                 if (!err) {
                     resolve({
@@ -92,21 +92,21 @@ export function removeBanner(id) {
 export function getAllBanners() {
     return new Promise((resolver, reject) => {
 
-        Banner.find({isActive: true}).populate('category').populate('product').populate('brand')
-        .exec((err, docs) => {
-            if (!err) {
-                resolver({
-                    success: true,
-                    message: "Banner fetched successfully",
-                    data: docs
-                });
-            } else {
-                resolver({
-                    success: true,
-                    message: "Can't find banners",
-                    data: docs
-                });
-            }
-        })
+        Banner.find({ isActive: true }).populate('category').populate('product').populate('brand')
+            .exec((err, docs) => {
+                if (!err) {
+                    resolver({
+                        success: true,
+                        message: "Banner fetched successfully",
+                        data: docs
+                    });
+                } else {
+                    resolver({
+                        success: true,
+                        message: "Can't find banners",
+                        data: docs
+                    });
+                }
+            })
     })
 }
