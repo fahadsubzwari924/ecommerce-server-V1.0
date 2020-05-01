@@ -292,3 +292,29 @@ export function removeProduct(id) {
 
     });
 }
+
+
+export function filterProducts(body) {
+    const { category, brand } = body;
+    console.log('logs ---- ', category, brand)
+    return new Promise((resolver, reject) => {
+
+        Product.find({ $or: [{ category: { $eq: category } }, { brand: { $eq: brand } }] }).exec((err, docs) => {
+            if (!err) {
+                resolver({
+                    success: true,
+                    data: docs,
+                    message: 'products fetched successfully'
+                })
+            } else {
+                resolver({
+                    success: false,
+                    data: [],
+                    message: 'Can`t find products'
+                })
+            }
+        })
+
+    })
+
+}

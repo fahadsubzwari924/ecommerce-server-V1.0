@@ -2,7 +2,7 @@
 
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, getPorductsByBrandId, removeProduct, findAllLatestProducts, getPorductsByCategoryId } from "../../models/product";
+import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, getPorductsByBrandId, removeProduct, findAllLatestProducts, getPorductsByCategoryId, filterProducts } from "../../models/product";
 import { Product } from './../../models/product';
 const multer = require('multer');
 const uploadFolder = 'uploads/';
@@ -152,5 +152,18 @@ export async function deleteProduct(req, res) {
         if (product) {
             generateResponse(product.success, product.message, product.data, res)
         }
+    }
+}
+
+export async function getfilteredProducts(req, res) {
+    console.log('in filter api')
+    try {
+        let body = parseBody(req);
+        let products = await filterProducts(body)
+        if (products) {
+            generateResponse(products.success, products.message, products.data, res)
+        }
+    } catch (error) {
+
     }
 }

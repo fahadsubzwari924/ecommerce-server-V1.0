@@ -7,7 +7,7 @@ export var Order = mongoose.model(
     new Schema({
 
         amount: String,
-        status: String,
+        status: { type: String, default: 'Pending' },
         date: String,
         products: Array,
         userId: { type: Schema.Types.ObjectId, ref: "users", null: true },
@@ -18,10 +18,6 @@ export var Order = mongoose.model(
 
 
 export function saveOrder(obj) {
-    console.log('object : ', obj)
-    let productIds = [];
-    // obj.products.forEach(prod => productIds.push(prod.id));
-    // console.log(productIds)
     return new Promise((resolve, reject) => {
         var order = new Order(obj)
         order.save(function(err, data) {
