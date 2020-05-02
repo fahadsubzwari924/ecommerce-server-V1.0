@@ -90,21 +90,21 @@ export function removeBanner(id) {
     })
 }
 
-export function getAllBanners() {
+export function getAllOrders() {
     return new Promise((resolver, reject) => {
 
-        Banner.find({ isActive: true }).populate('category').populate('product').populate('brand')
+        Order.find({}).populate('userId')
             .exec((err, docs) => {
                 if (!err) {
                     resolver({
                         success: true,
-                        message: "Banner fetched successfully",
+                        message: "Orders fetched successfully",
                         data: docs
                     });
                 } else {
                     resolver({
                         success: true,
-                        message: "Can't find banners",
+                        message: "Can't find orders",
                         data: docs
                     });
                 }

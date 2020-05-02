@@ -1,7 +1,7 @@
 'use strick';
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveOrder, editBanner, removeBanner, getAllBanners } from '../../models/order';
+import { saveOrder, editBanner, removeBanner, getAllBanners, getAllOrders } from '../../models/order';
 
 
 export async function addOrder(req, res) {
@@ -45,12 +45,12 @@ export async function deleteBanner(req, res) {
     }
 }
 
-export async function getAllBanner(req, res) {
+export async function getOrders(req, res) {
 
     try {
-        let banners = await getAllBanners();
-        if (banners) {
-            generateResponse(banners.success, banners.message, banners.data, res)
+        let orders = await getAllOrders();
+        if (orders) {
+            generateResponse(orders.success, orders.message, orders.data, res)
         }
     } catch (error) {
         generateResponse(false, 'Error occured, 404 not found!', err, res)
