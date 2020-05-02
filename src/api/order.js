@@ -2,7 +2,7 @@
 
 import { Router } from "express";
 import { log, loggedIn } from "./middlewares/index";
-import { getAllCategories, getCategoryById, addOrder, updateCategory, getSubCategories, deleteCategory, getDecendenctCategories, getAllTotalCategories } from "./handlers/order";
+import { addOrder, getOrders } from "./handlers/order";
 
 
 export default class OrdersAPI {
@@ -15,6 +15,7 @@ export default class OrdersAPI {
         let router = this.router;
 
         router.post("/", log, addOrder);
+        router.get('/', log, getOrders);
         // router.get("/", log, getAllCategories);
         // router.get('/all', log, getAllTotalCategories)
         // router.get("/:id", log, loggedIn, getCategoryById);
