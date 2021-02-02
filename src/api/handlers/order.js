@@ -1,7 +1,7 @@
 'use strick';
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveOrder, editBanner, removeBanner, getAllBanners, getAllOrders } from '../../models/order';
+import { saveOrder, editBanner, removeBanner, getAllBanners, getAllOrders, updateOrderStatus } from '../../models/order';
 
 
 export async function addOrder(req, res) {
@@ -16,21 +16,24 @@ export async function addOrder(req, res) {
             generateResponse(false, "Please provide complete info", null, res)
         }
     } catch (err) {
+        console.log(err)
         generateResponse(false, 'Error occured, 404 not found!', err, res)
     }
 }
-export async function updateBanner(req, res) {
+export async function updateOrder(req, res) {
     try {
         let body = parseBody(req)
         if (body) {
-            let banner = await editBanner(body)
-            if (banner) {
-                generateResponse(banner.success, banner.message, null, res)
+            let order = await updateOrderStatus(body)
+            console.log('order ----> ', order)
+            if (order) {
+                generateResponse(order.success, order.message, null, res)
             }
         } else {
             generateResponse(false, "Please provide complete info", null, res)
         }
     } catch (err) {
+        console.log(err);
         generateResponse(false, 'Error occured, 404 not found!', err, res)
     }
 }

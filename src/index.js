@@ -8,19 +8,13 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { DefaultHandler } from './api/handlers/root'
-import { onConnection } from './utilities/mqtt-client';
 var mongoose = require('mongoose');
 
 let port = config.app['port'];
 let app = express();
 let whitelist = Object.keys(config.whitelist).map(k => config.whitelist[k]);
 
-var isMQTTConnected = false;
-onConnection(function() {
-    console.log('MQTT Client Connected..');
-    isMQTTConnected = true;
-})
-exports.isMQTTConnected = isMQTTConnected;
+
 
 app.set("port", port);
 app.use(bodyParser.json({ limit: config.app['bodyLimit'] }));

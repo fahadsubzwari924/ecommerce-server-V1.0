@@ -12,7 +12,8 @@ export var Order = mongoose.model(
         products: Array,
         userId: { type: Schema.Types.ObjectId, ref: "users", null: true },
         user: Object,
-        paymentMethod: String
+        paymentMethod: String,
+        createdAt: { type: Date, default: Date.now }
     })
 );
 
@@ -40,29 +41,26 @@ export function saveOrder(obj) {
     })
 }
 
-export function editBanner(body) {
-
-    return new Promise((resolver, reject) => {
-        var id = body._id
+export function updateOrderStatus(body) {
+    return new Promise((resolve, reject) => {
+        const { _id, status } = body;
         delete body._id;
-        if (body.heading) {
-            Banner.updateOne({ _id: id }, { $set: body }).exec((err, banner) => {
-                if (!err) {
-                    resolver({
-                        success: true,
-                        message: "Banner Updated Successfully",
-                        data: banner
-                    })
-                } else {
-                    resolver({
-                        success: false,
-                        message: "Error in updating banner",
-                        data: null
-                    })
-                }
-            })
-
-        }
+        Order.updateOne({ _id: _id }, { $set: { status: status } }).exec((err, order) => {
+            console.log(order, err);
+            if (!err) {
+                resolve({
+                    success: true,
+                    message: "Order Status Updated Successfully",
+                    data: order
+                })
+            } else {
+                resolve({
+                    success: false,
+                    message: "Error in updating order status",
+                    data: err
+                })
+            }
+        })
     })
 
 }

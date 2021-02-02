@@ -11,6 +11,7 @@ export var Banner = mongoose.model(
         product: { type: Schema.Types.ObjectId, ref: "product" },
         category: { type: Schema.Types.ObjectId, ref: "category" },
         // brand: { type: Schema.Types.ObjectId, ref: "brand" },
+        type: { type: String, default: 'main' }, // main, leftSubMain, rightSubSmall, rightSubMain
         createdAt: String,
         updatedAt: String,
         isActive: { type: Boolean, default: true }

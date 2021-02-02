@@ -1,4 +1,3 @@
-
 import { Router } from "express";
 import { log, loggedIn } from "./middlewares/index";
 import { addBanner, updateBanner, deleteBanner, getAllBanner } from "./handlers/banner";
@@ -9,7 +8,6 @@ const fs = require('fs');
 
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // console.log(file, 'in multer')
         if (fs.existsSync(`temp/`)) {
             cb(null, `temp/`);
         } else {
