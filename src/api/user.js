@@ -18,7 +18,7 @@ export default class UserAPI {
         router.get("/", log, loggedIn, getAllUsers);
         router.get("/:id", log, loggedIn, getUserById);
         router.put("/", log, updateUser);
-        router.post('/login', log, loginUser)
+        router.post('/login', loginUser)
         router.post('/reset', log, resetPassword)
         router.put('/password', log, changePasswordOfUser)
 

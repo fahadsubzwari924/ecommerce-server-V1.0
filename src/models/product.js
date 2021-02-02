@@ -295,11 +295,11 @@ export function removeProduct(id) {
 
 
 export function filterProducts(body) {
-    const { category, brand } = body;
-    console.log('logs ---- ', category, brand)
+    const filter = body;
+    console.log(filter)
     return new Promise((resolver, reject) => {
 
-        Product.find({ $or: [{ category: { $eq: category } }, { brand: { $eq: brand } }] }).exec((err, docs) => {
+        Product.find(filter).exec((err, docs) => {
             if (!err) {
                 resolver({
                     success: true,
