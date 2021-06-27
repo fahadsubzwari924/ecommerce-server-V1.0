@@ -1,6 +1,10 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
+import { reject } from 'lodash';
+import { ObjectId } from 'mongodb';
+import { findAllSubCategories } from './category';
+
 export var Product = mongoose.model(
     "product",
     new Schema({
@@ -155,7 +159,7 @@ export function getPorductsByBrandId(brandId) {
 
     return new Promise((resolver, reject) => {
 
-        Product.find({ brand: brandId, isActive: true }).exec((err, docs) => {
+        Product.find({ brand: ObjectId(brandId), isActive: true }).exec((err, docs) => {
             if (!err) {
                 resolver({
                     success: true,
@@ -174,26 +178,41 @@ export function getPorductsByBrandId(brandId) {
     })
 
 }
-export function getPorductsByCategoryId(categoryId) {
+export function getProductsByCategory(body) {
 
-    return new Promise((resolver, reject) => {
+    return new Promise(async (resolver, reject) => {
 
-        Product.find({ category: categoryId, isActive: true }).exec((err, docs) => {
-            if (!err) {
+        
+        let categoryIds = await findAllSubCategories(body, true);
+
+        if (categoryIds.success && categoryIds.data.length) {
+            categoryIds = categoryIds.data.map(i => i._id);
+
+            console.log('categoryIds: ', categoryIds);
+
+            const products = await Product.find({ category: { $in: categoryIds }, isActive: true });
+            console.log('products: ',products);
+
+            if (!products) { 
                 resolver({
-                    success: true,
-                    data: docs,
-                    message: 'category products fetched successfully'
-                })
-            } else {
-                resolver({
-                    success: false,
-                    data: [],
-                    message: 'Can`t find products'
+                    status: false,
+                    message: 'products not found',
+                    data: null
                 })
             }
-        })
 
+            resolver({
+                status: true,
+                message: 'successfully get products',
+                data: products
+            })
+        }
+
+        resolver({
+            status: false,
+            message: 'category not found',
+            data: null
+        })
     })
 
 }
@@ -294,12 +313,16 @@ export function removeProduct(id) {
 }
 
 
-export function filterProducts(body) {
-    const filter = body;
-    console.log(filter)
-    return new Promise((resolver, reject) => {
+export function getPriceRangeProducts(body) {
+    const { priceFrom, priceTo } = body;
 
-        Product.find(filter).exec((err, docs) => {
+    return new Promise((resolver, reject) => {
+        Product.find({ 
+            price : {
+                $gte: priceFrom,
+                $lt: priceTo
+            } 
+        }).exec((err, docs) => {
             if (!err) {
                 resolver({
                     success: true,
@@ -317,4 +340,10 @@ export function filterProducts(body) {
 
     })
 
+}
+
+export function getMaxMinPrice() {
+    return new Promise(async (resolve, reject) => {
+        const maxPrice = Product.find().sort({ price: 1 }).limit(1);
+    })
 }

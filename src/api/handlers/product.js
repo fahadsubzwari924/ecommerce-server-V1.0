@@ -2,7 +2,17 @@
 
 
 import { generateResponse, parseBody } from "../../utilities";
-import { saveProduct, findAllProducts, findProductById, editProduct, checkGroupByName, checkGroupByColour, getPorductsByBrandId, removeProduct, findAllLatestProducts, getPorductsByCategoryId, filterProducts } from "../../models/product";
+import { 
+    saveProduct, 
+    findAllProducts, 
+    findProductById, 
+    editProduct, 
+    getPorductsByBrandId, 
+    removeProduct, 
+    findAllLatestProducts, 
+    getPriceRangeProducts, 
+    getProductsByCategory
+} from "../../models/product";
 import { Product } from './../../models/product';
 const multer = require('multer');
 const uploadFolder = 'uploads/';
@@ -106,7 +116,7 @@ export async function getProductById(req, res) {
 
 export async function getProductOfBrand(req, res) {
     try {
-        let brandId = req.params.brnd_id
+        let brandId = req.body.brandId
         let products = await getPorductsByBrandId(brandId)
         if (products) {
             generateResponse(products.success, products.message, products.data, res)
@@ -118,8 +128,7 @@ export async function getProductOfBrand(req, res) {
 
 export async function getProductOfCategory(req, res) {
     try {
-        let category_id = req.params.cat_id
-        let products = await getPorductsByCategoryId(category_id)
+        let products = await getProductsByCategory(req.body)
         if (products) {
             generateResponse(products.success, products.message, products.data, res)
         }
@@ -155,11 +164,11 @@ export async function deleteProduct(req, res) {
     }
 }
 
-export async function getfilteredProducts(req, res) {
+export async function getProductsOfPriceRange(req, res) {
     console.log('in filter api')
     try {
         let body = parseBody(req);
-        let products = await filterProducts(body)
+        let products = await getPriceRangeProducts(body)
         if (products) {
             generateResponse(products.success, products.message, products.data, res)
         }

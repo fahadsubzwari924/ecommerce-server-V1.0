@@ -21,7 +21,6 @@ export default class Api {
 
     loadRouteGroups() {
         this.routeGroups.push(new RootAPI());
-
         this.routeGroups.push(new RoleAPI());
         this.routeGroups.push(new UserAPI());
         this.routeGroups.push(new MenuAPI());

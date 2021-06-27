@@ -94,10 +94,16 @@ export function findAllRootCategories() {
     });
 }
 
-export function findAllSubCategories(body) {
+export function findAllSubCategories(body, idsOnly = false) {
     let parentCategoryPath = body.parent
+
+    
+
     return new Promise((resolve, reject) => {
-        Category.find({ parent: new RegExp(parentCategoryPath), isActive: true }).exec((err, docs) => {
+
+        let filters = { parent: new RegExp(parentCategoryPath), isActive: true };
+
+        Category.find(filters, idsOnly ? { _id: 1 } : {} ).exec((err, docs) => {
             if (!err) {
                 resolve({
                     success: true,
